@@ -33,14 +33,16 @@ pipeline {
             }
             steps {
                 sh '''
+                    pwd
+                    ls -l build
                     echo "Running tests"
                     # Check build/index.html exists
 
-                    if [ ! -f /build/index.html ]; then
-                        echo "index.html not found in /build, exiting"
+                    if [ ! -f build/index.html ]; then
+                        echo "build/index.html not found, exiting"
                         exit 1
                     fi
-                    echo "/build/index.html found, proceeding with tests"
+                    echo "build/index.html found, proceeding with tests"
                     # Install dependencies
                     npm ci
                     # Run tests
