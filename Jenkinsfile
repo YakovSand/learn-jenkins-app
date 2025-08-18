@@ -24,31 +24,46 @@ pipeline {
                 '''
             }
         }
-        stage('Test') {
+        // stage('Test') {
+        //     agent {
+        //         docker {
+        //             image 'node:18-alpine'
+        //             reuseNode true
+        //         }
+        //     }
+        //     steps {
+        //         sh '''
+        //             pwd
+        //             ls -l build
+        //             echo "Running tests"
+        //             # Check build/index.html exists
+
+        //             if [ ! -f build/index.html ]; then
+        //                 echo "build/index.html not found, exiting"
+        //                 exit 1
+        //             fi
+        //             echo "
+        //             build/index.html found, proceeding with tests"
+        //             # Install dependencies
+        //             npm ci
+        //             # Run tests
+        //             npm test
+        //             echo "Tests completed successfully"
+        //         '''
+        //     }
+        // }
+        stage('E2E Test') {
             agent {
                 docker {
-                    image 'node:18-alpine'
+                    image 'mcr.microsoft.com/playwright:v1.39.0-jammy'
                     reuseNode true
                 }
             }
             steps {
                 sh '''
-                    pwd
-                    ls -l build
-                    echo "Running tests"
-                    # Check build/index.html exists
-
-                    if [ ! -f build/index.html ]; then
-                        echo "build/index.html not found, exiting"
-                        exit 1
-                    fi
-                    echo "
-                    build/index.html found, proceeding with tests"
-                    # Install dependencies
-                    npm ci
-                    # Run tests
-                    npm test
-                    echo "Tests completed successfully"
+                    npm install -g serve
+                    serve -s build
+                    npx playwright test
                 '''
             }
         }
