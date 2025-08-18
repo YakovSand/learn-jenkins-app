@@ -42,7 +42,8 @@ pipeline {
                         echo "build/index.html not found, exiting"
                         exit 1
                     fi
-                    echo "build/index.html found, proceeding with tests"
+                    echo "
+                    build/index.html found, proceeding with tests"
                     # Install dependencies
                     npm ci
                     # Run tests
@@ -50,6 +51,12 @@ pipeline {
                     echo "Tests completed successfully"
                 '''
             }
+        }
+    }
+
+    post {
+        always {
+            junit 'test-results/junit.xml'
         }
     }
 }
