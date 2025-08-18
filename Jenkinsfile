@@ -24,34 +24,34 @@ pipeline {
                 '''
             }
         }
-        // stage('Test') {
-        //     agent {
-        //         docker {
-        //             image 'node:18-alpine'
-        //             reuseNode true
-        //         }
-        //     }
-        //     steps {
-        //         sh '''
-        //             pwd
-        //             ls -l build
-        //             echo "Running tests"
-        //             # Check build/index.html exists
+        stage('Test') {
+            agent {
+                docker {
+                    image 'node:18-alpine'
+                    reuseNode true
+                }
+            }
+            steps {
+                sh '''
+                    pwd
+                    ls -l build
+                    echo "Running tests"
+                    # Check build/index.html exists
 
-        //             if [ ! -f build/index.html ]; then
-        //                 echo "build/index.html not found, exiting"
-        //                 exit 1
-        //             fi
-        //             echo "
-        //             build/index.html found, proceeding with tests"
-        //             # Install dependencies
-        //             npm ci
-        //             # Run tests
-        //             npm test
-        //             echo "Tests completed successfully"
-        //         '''
-        //     }
-        // }
+                    if [ ! -f build/index.html ]; then
+                        echo "build/index.html not found, exiting"
+                        exit 1
+                    fi
+                    echo "
+                    build/index.html found, proceeding with tests"
+                    # Install dependencies
+                    npm ci
+                    # Run tests
+                    npm test
+                    echo "Tests completed successfully"
+                '''
+            }
+        }
         stage('E2E Test') {
             agent {
                 docker {
@@ -62,7 +62,8 @@ pipeline {
             steps {
                 sh '''
                     npm install serve
-                    node_modules/.bin/serve -s build
+                    node_modules/.bin/serve -s build & 
+                    sleep 10
                     npx playwright test
                 '''
             }
@@ -71,7 +72,7 @@ pipeline {
 
     post {
         always {
-            junit 'test-results/junit.xml'
+            junit 'jest-results/junit.xml'
         }
     }
 }
