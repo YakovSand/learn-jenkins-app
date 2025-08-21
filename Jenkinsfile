@@ -89,7 +89,26 @@ pipeline {
             }
         }
 
-        stage('Deploy') {
+        stage('Deploy Staging') {
+            agent {
+                docker {
+                    image 'node:18-alpine'
+                    reuseNode true
+                }
+            }
+            steps {
+                sh '''
+                    echo "Deploying the application"
+                    npm install netlify-cli@20.1.1
+                    node_modules/.bin/netlify --version
+                    echo "Deploying to Staging.Site ID: $NETLIFY_SITE_ID"
+                    node_modules/.bin/netlify status
+                    node_modules/.bin/netlify deploy --dir=build
+                    echo "Deployment completed successfully!"
+                '''
+            }
+        }
+        stage('Deploy Production') {
             agent {
                 docker {
                     image 'node:18-alpine'
@@ -108,7 +127,7 @@ pipeline {
                 '''
             }
         }
-        stage('PROD E2E ') {
+        stage('PROD E2E Test') {
             agent {
                 docker {
                     image 'mcr.microsoft.com/playwright:v1.54.0-noble'
