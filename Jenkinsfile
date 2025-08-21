@@ -104,7 +104,7 @@ pipeline {
                     echo "Deploying to Production.Site ID: $NETLIFY_SITE_ID"
                     node_modules/.bin/netlify status
                     node_modules/.bin/netlify deploy --dir=build --prod
-                    echo "Deployment completed successfully"
+                    echo "Deployment completed successfully!"
                 '''
             }
         }
