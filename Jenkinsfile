@@ -107,10 +107,10 @@ pipeline {
                     node_modules/.bin/node-jq -r '.deploy_url' deploy-output-stg.json
                     echo "Deployment completed successfully!"
                 '''
-            }
-            script {
-                env.CI_STAGING_ENVIRONMENT_URL = sh(script: "node_modules/.bin/node-jq -r '.deploy_url' deploy-output-stg.json", returnStdout: true).trim()
-                echo "Staging URL: ${env.CI_STAGING_ENVIRONMENT_URL}"
+                script {
+                    env.CI_STAGING_ENVIRONMENT_URL = sh(script: "node_modules/.bin/node-jq -r '.deploy_url' deploy-output-stg.json", returnStdout: true).trim()
+                    echo "Staging URL: ${env.CI_STAGING_ENVIRONMENT_URL}"
+                }
             }
         }
         stage('STAGING E2E Test') {
