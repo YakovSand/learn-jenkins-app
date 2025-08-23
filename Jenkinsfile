@@ -122,7 +122,6 @@ pipeline {
             }
             environment {
                 CI_ENVIRONMENT_URL = "${env.CI_STAGING_ENVIRONMENT_URL}"
-                echo "Using Staging URL for tests: ${env.CI_ENVIRONMENT_URL}"
             }
             steps {
                 sh '''
