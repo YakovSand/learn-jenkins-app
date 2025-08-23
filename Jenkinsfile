@@ -108,6 +108,33 @@ pipeline {
                     echo "Deployment completed successfully!"
                 '''
             }
+            script {
+                env.CI_STAGING_ENVIRONMENT_URL = sh(script: "node_modules/.bin/node-jq -r '.deploy_url' deploy-output-stg.json", returnStdout: true).trim()
+                echo "Staging URL: ${env.CI_STAGING_ENVIRONMENT_URL}"
+            }
+        }
+        stage('STAGING E2E Test') {
+            agent {
+                docker {
+                    image 'mcr.microsoft.com/playwright:v1.54.0-noble'
+                    reuseNode true
+                }
+            }
+            environment {
+                CI_ENVIRONMENT_URL = env.CI_STAGING_ENVIRONMENT_URL
+                echo "Using Staging URL for tests: ${env.CI_ENVIRONMENT_URL}"
+            }
+            steps {
+                sh '''
+                    npx playwright install
+                    npx playwright test --reporter=html
+                '''
+            }
+            post {
+                always {
+                    publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, icon: '', keepAll: false, reportDir: 'playwright-report', reportFiles: 'index.html', reportName: 'Playwright staging HTML Report', reportTitles: '', useWrapperFileDirectly: true])
+                }
+            }
         }
         stage('Approval') {
             steps {
